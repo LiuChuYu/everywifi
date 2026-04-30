@@ -1,0 +1,18 @@
+# docker-sim environment configuration
+# Used by Dockerfile.sim / entrypoint-sim.sh
+
+# --- dnsmasq (DHCP + DNS) ---
+DNSMASQ_INTERFACE=eth0
+DNSMASQ_DHCP_RANGE=192.168.100.50,192.168.100.150,12h
+DNSMASQ_DOMAIN=everywifi.local
+
+# --- hostapd (simulated AP — mac80211_hwsim or nl80211) ---
+HOSTAPD_SSID=everywifi-sim
+HOSTAPD_CHANNEL=6
+HOSTAPD_HW_MODE=g
+HOSTAPD_WPA_PASSPHRASE=simpassword
+
+# --- NAT / routing ---
+WAN_INTERFACE=eth1
+LAN_INTERFACE=eth0
+ENABLE_NAT=true

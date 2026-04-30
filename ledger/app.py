@@ -4,7 +4,7 @@ from flask import Flask, jsonify
 from werkzeug.exceptions import HTTPException
 
 from .database import db
-from .routes import auth, plans, purchases, usage, users
+from .routes import accounts, auth, providers, rate_cards, sessions, usage, users
 
 
 def create_app(config=None):
@@ -23,8 +23,10 @@ def create_app(config=None):
     db.init_app(app)
 
     app.register_blueprint(users.bp)
-    app.register_blueprint(plans.bp)
-    app.register_blueprint(purchases.bp)
+    app.register_blueprint(accounts.bp)
+    app.register_blueprint(rate_cards.bp)
+    app.register_blueprint(providers.bp)
+    app.register_blueprint(sessions.bp)
     app.register_blueprint(usage.bp)
     app.register_blueprint(auth.bp)
 

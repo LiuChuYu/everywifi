@@ -1,84 +1,76 @@
 import json
 
 
-def test_list_plans_empty(client):
-    rv = client.get("/plans")
+def test_list_rate_cards_empty(client):
+    rv = client.get("/rate-cards")
     assert rv.status_code == 200
     assert rv.get_json() == []
 
 
-def test_create_plan(client):
+def test_create_rate_card(client):
     rv = client.post(
-        "/plans",
-        data=json.dumps({"name": "Day Pass", "price": 50, "data_limit_mb": 500, "duration_days": 1}),
+        "/rate-cards",
+        data=json.dumps({"name": "Standard", "price_per_mb": 2000, "description": "2 TWD/MB"}),
         content_type="application/json",
     )
     assert rv.status_code == 201
     data = rv.get_json()
-    assert data["name"] == "Day Pass"
-    assert data["price"] == 50
-    assert data["data_limit_mb"] == 500
-    assert data["duration_days"] == 1
+    assert data["name"] == "Standard"
+    assert data["price_per_mb"] == 2000
+    assert data["description"] == "2 TWD/MB"
 
 
-def test_create_plan_duplicate(client):
-    payload = {"name": "Weekly", "price": 200, "data_limit_mb": 5000, "duration_days": 7}
-    client.post("/plans", data=json.dumps(payload), content_type="application/json")
-    rv = client.post("/plans", data=json.dumps(payload), content_type="application/json")
+def test_create_rate_card_duplicate(client):
+    payload = {"name": "Dup", "price_per_mb": 1000}
+    client.post("/rate-cards", data=json.dumps(payload), content_type="application/json")
+    rv = client.post("/rate-cards", data=json.dumps(payload), content_type="application/json")
     assert rv.status_code == 409
 
 
-def test_create_plan_missing_fields(client):
+def test_create_rate_card_missing_fields(client):
     rv = client.post(
-        "/plans",
-        data=json.dumps({"name": "Bad Plan"}),
+        "/rate-cards",
+        data=json.dumps({"name": "No Price"}),
         content_type="application/json",
     )
     assert rv.status_code == 400
 
 
-def test_create_plan_invalid_price(client):
+def test_create_rate_card_invalid_price(client):
     rv = client.post(
-        "/plans",
-        data=json.dumps({"name": "Bad", "price": -1, "data_limit_mb": 100, "duration_days": 1}),
+        "/rate-cards",
+        data=json.dumps({"name": "Bad", "price_per_mb": -1}),
         content_type="application/json",
     )
     assert rv.status_code == 400
 
 
-def test_create_plan_unlimited_data(client):
+def test_create_rate_card_free(client):
     rv = client.post(
-        "/plans",
-        data=json.dumps({"name": "Unlimited", "price": 999, "data_limit_mb": 0, "duration_days": 30}),
+        "/rate-cards",
+        data=json.dumps({"name": "Free", "price_per_mb": 0}),
         content_type="application/json",
     )
     assert rv.status_code == 201
-    assert rv.get_json()["data_limit_mb"] == 0
+    assert rv.get_json()["price_per_mb"] == 0
 
 
-def test_list_plans(client):
-    client.post(
-        "/plans",
-        data=json.dumps({"name": "P1", "price": 10, "data_limit_mb": 100, "duration_days": 1}),
-        content_type="application/json",
-    )
-    client.post(
-        "/plans",
-        data=json.dumps({"name": "P2", "price": 20, "data_limit_mb": 200, "duration_days": 2}),
-        content_type="application/json",
-    )
-    rv = client.get("/plans")
+def test_list_rate_cards(client):
+    client.post("/rate-cards", data=json.dumps({"name": "A", "price_per_mb": 1000}), content_type="application/json")
+    client.post("/rate-cards", data=json.dumps({"name": "B", "price_per_mb": 2000}), content_type="application/json")
+    rv = client.get("/rate-cards")
     assert rv.status_code == 200
     assert len(rv.get_json()) == 2
 
 
-def test_get_plan(client):
+def test_get_rate_card(client):
     rv = client.post(
-        "/plans",
-        data=json.dumps({"name": "Monthly", "price": 500, "data_limit_mb": 20000, "duration_days": 30}),
+        "/rate-cards",
+        data=json.dumps({"name": "Premium", "price_per_mb": 5000}),
         content_type="application/json",
     )
-    plan_id = rv.get_json()["id"]
-    rv2 = client.get(f"/plans/{plan_id}")
+    card_id = rv.get_json()["id"]
+    rv2 = client.get(f"/rate-cards/{card_id}")
     assert rv2.status_code == 200
-    assert rv2.get_json()["name"] == "Monthly"
+    assert rv2.get_json()["name"] == "Premium"
+

@@ -1,17 +1,12 @@
 import json
 
 
-def _setup(client, username="authuser"):
+def _setup(client, username="authuser", credit_limit=50000):
     client.post(
         "/users",
         data=json.dumps({"username": username, "email": f"{username}@x.com", "password": "pw"}),
         content_type="application/json",
     )
-    plan = client.post(
-        "/plans",
-        data=json.dumps({"name": f"plan_{username}", "price": 50, "data_limit_mb": 500, "duration_days": 1}),
-        content_type="application/json",
-    ).get_json()
     user_info = client.post(
         "/users/login",
         data=json.dumps({"username": username, "password": "pw"}),
@@ -20,13 +15,11 @@ def _setup(client, username="authuser"):
     user_id = user_info["user"]["id"]
     token = user_info["token"]
 
-    purchase = client.post(
-        "/purchases",
-        data=json.dumps({"user_id": user_id, "plan_id": plan["id"]}),
+    client.post(
+        "/accounts",
+        data=json.dumps({"user_id": user_id, "credit_limit": credit_limit, "billing_enabled": True}),
         content_type="application/json",
-    ).get_json()
-    client.post(f"/purchases/{purchase['id']}/pay")
-
+    )
     return token, user_id
 
 
@@ -55,15 +48,15 @@ def test_auth_invalid_token(client):
     assert "invalid token" in data["reason"]
 
 
-def test_auth_no_purchase(client):
+def test_auth_no_account(client):
     client.post(
         "/users",
-        data=json.dumps({"username": "nopay", "email": "nopay@x.com", "password": "pw"}),
+        data=json.dumps({"username": "noaccount", "email": "na@x.com", "password": "pw"}),
         content_type="application/json",
     )
     login = client.post(
         "/users/login",
-        data=json.dumps({"username": "nopay", "password": "pw"}),
+        data=json.dumps({"username": "noaccount", "password": "pw"}),
         content_type="application/json",
     ).get_json()
     token = login["token"]
@@ -75,7 +68,30 @@ def test_auth_no_purchase(client):
     assert rv.status_code == 200
     data = rv.get_json()
     assert data["allowed"] is False
-    assert "no active purchase" in data["reason"]
+    assert "billing not enabled" in data["reason"]
+
+
+def test_auth_billing_disabled(client):
+    client.post(
+        "/users",
+        data=json.dumps({"username": "nodisabled", "email": "nd@x.com", "password": "pw"}),
+        content_type="application/json",
+    )
+    login = client.post(
+        "/users/login",
+        data=json.dumps({"username": "nodisabled", "password": "pw"}),
+        content_type="application/json",
+    ).get_json()
+    user_id = login["user"]["id"]
+    token = login["token"]
+    client.post(
+        "/accounts",
+        data=json.dumps({"user_id": user_id, "credit_limit": 50000, "billing_enabled": False}),
+        content_type="application/json",
+    )
+    rv = client.post("/auth", data=json.dumps({"token": token}), content_type="application/json")
+    assert rv.status_code == 200
+    assert rv.get_json()["allowed"] is False
 
 
 def test_auth_missing_token(client):
@@ -98,4 +114,15 @@ def test_auth_returns_user_info(client):
     data = rv.get_json()
     assert data["user_id"] == user_id
     assert "username" in data
-    assert "purchase_id" in data
+    assert "account_id" in data
+    assert "credit_remaining" in data
+
+
+def test_auth_credit_exhausted(client):
+    """信用額度耗盡後不允許上網"""
+    token, _ = _setup(client, "authexhaust", credit_limit=0)
+    rv = client.post("/auth", data=json.dumps({"token": token}), content_type="application/json")
+    assert rv.status_code == 200
+    data = rv.get_json()
+    assert data["allowed"] is False
+    assert "credit limit" in data["reason"]

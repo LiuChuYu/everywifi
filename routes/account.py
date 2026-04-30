@@ -1,5 +1,7 @@
+from decimal import Decimal, InvalidOperation
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
+from sqlalchemy import update
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 from models import Transaction, User
@@ -18,16 +20,19 @@ def dashboard():
 def topup():
     if request.method == 'POST':
         try:
-            amount = float(request.form.get('amount', 0))
-        except ValueError:
+            amount = Decimal(request.form.get('amount', '0')).quantize(Decimal('0.01'))
+        except InvalidOperation:
             flash('Invalid amount.', 'danger')
             return render_template('account/topup.html')
 
-        if amount < 10 or amount > 1000:
+        if amount < Decimal('10') or amount > Decimal('1000'):
             flash('Amount must be between 10 and 1000 TWD.', 'danger')
             return render_template('account/topup.html')
 
-        current_user.balance += amount
+        db.session.execute(
+            update(User).where(User.id == current_user.id)
+            .values(balance=User.balance + amount)
+        )
         txn = Transaction(
             user_id=current_user.id,
             amount=amount,
@@ -36,6 +41,7 @@ def topup():
         )
         db.session.add(txn)
         db.session.commit()
+        db.session.refresh(current_user._get_current_object())
         flash(f'Successfully added {amount:.2f} TWD to your balance.', 'success')
         return redirect(url_for('account.dashboard'))
 

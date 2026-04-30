@@ -1,0 +1,4 @@
+services:
+  test:
+    build: .
+    command: ["python", "-m", "pytest", "tests/", "-v", "--tb=short"]

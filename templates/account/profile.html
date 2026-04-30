@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Profile - EveryWifi{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-body p-4">
+                <h4 class="card-title">Update Email</h4>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" value="{{ current_user.email }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Email</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <h4 class="card-title">Change Password</h4>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Current Password</label>
+                        <input type="password" name="current_password" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">New Password</label>
+                        <input type="password" name="new_password" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Confirm New Password</label>
+                        <input type="password" name="confirm_new_password" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-warning">Change Password</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <h4 class="card-title">Account Info</h4>
+                <p><strong>Username:</strong> {{ current_user.username }}</p>
+                <p><strong>Email:</strong> {{ current_user.email }}</p>
+                <p><strong>Balance:</strong> {{ "%.2f"|format(current_user.balance) }} TWD</p>
+                <p><strong>Member Since:</strong> {{ current_user.created_at.strftime('%Y-%m-%d') }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

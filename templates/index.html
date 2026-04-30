@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Welcome - EveryWifi{% endblock %}
+{% block content %}
+<div class="text-center py-5">
+    <h1 class="display-4 fw-bold text-primary">Welcome to EveryWifi</h1>
+    <p class="lead">Manage your WiFi account, top up credits, and track usage.</p>
+    <div class="mt-4">
+        <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg me-2">Get Started</a>
+        <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary btn-lg">Login</a>
+    </div>
+</div>
+{% endblock %}

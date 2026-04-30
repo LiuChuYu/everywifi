@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Top Up - EveryWifi{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <h2 class="card-title mb-4">Top Up Balance</h2>
+                <p>Current Balance: <strong>{{ "%.2f"|format(current_user.balance) }} TWD</strong></p>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Amount (TWD)</label>
+                        <input type="number" name="amount" class="form-control" min="10" max="1000" step="0.01" required>
+                        <div class="form-text">Min: 10 TWD, Max: 1000 TWD</div>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Add Credits</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

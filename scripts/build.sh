@@ -5,8 +5,9 @@
 #   ./scripts/build.sh <board>
 #
 # Supported boards:
-#   mt7621      — OpenWrt firmware for MediaTek MT7621 routers
-#   docker-sim  — Docker simulation image for local testing
+#   mt7621               — OpenWrt firmware for MediaTek MT7621 routers
+#   xiaomi-mi-router-4a  — OpenWrt firmware for Xiaomi Mi Router 4A Gigabit
+#   docker-sim           — Docker simulation image for local testing
 #
 # The build runs entirely inside a Docker container; Docker is the only
 # host dependency.
@@ -20,8 +21,9 @@ usage() {
     echo "Usage: $0 <board>"
     echo ""
     echo "Supported boards:"
-    echo "  mt7621      OpenWrt firmware for MT7621 routers"
-    echo "  docker-sim  Docker simulation image for local testing"
+    echo "  mt7621               OpenWrt firmware for MT7621 routers"
+    echo "  xiaomi-mi-router-4a  OpenWrt firmware for Xiaomi Mi Router 4A Gigabit"
+    echo "  docker-sim           Docker simulation image for local testing"
     exit 1
 }
 
@@ -52,8 +54,8 @@ case "${BOARD}" in
         echo "    Run with: ./scripts/run-sim.sh"
         ;;
 
-    mt7621)
-        echo "==> Building OpenWrt firmware for mt7621..."
+    mt7621|xiaomi-mi-router-4a)
+        echo "==> Building OpenWrt firmware for ${BOARD}..."
         docker build \
             -f "${REPO_ROOT}/docker/Dockerfile.builder" \
             -t everywifi-builder:latest \

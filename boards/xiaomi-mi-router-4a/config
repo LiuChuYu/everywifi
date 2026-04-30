@@ -1,0 +1,42 @@
+# OpenWrt .config for Xiaomi Mi Router 4A Gigabit (ramips/mt7621)
+# Target profile: xiaomi_mi-router-4a-gigabit
+#
+# Hardware specs:
+#   SoC  : MediaTek MT7621AT (dual-core MIPS 880 MHz)
+#   RAM  : 128 MB DDR3
+#   Flash: 16 MB SPI NOR
+#   WiFi : MT7603 (2.4 GHz 2T2R) + MT7612 (5 GHz 2T2R)
+#   Ports: 3x GbE LAN + 1x GbE WAN
+#
+# Flash with: sysupgrade or breed bootloader method
+
+# Target platform
+CONFIG_TARGET_ramips=y
+CONFIG_TARGET_ramips_mt7621=y
+CONFIG_TARGET_ramips_mt7621_DEVICE_xiaomi_mi-router-4a-gigabit=y
+
+# Default packages
+CONFIG_PACKAGE_base-files=y
+CONFIG_PACKAGE_libc=y
+CONFIG_PACKAGE_libgcc=y
+CONFIG_PACKAGE_busybox=y
+
+# Networking
+CONFIG_PACKAGE_dnsmasq=y
+CONFIG_PACKAGE_iptables=y
+CONFIG_PACKAGE_ip6tables=y
+CONFIG_PACKAGE_ppp=y
+CONFIG_PACKAGE_ppp-mod-pppoe=y
+CONFIG_PACKAGE_luci=y
+CONFIG_PACKAGE_luci-app-firewall=y
+
+# Wireless — MT7603 (2.4 GHz) + MT7612 (5 GHz)
+CONFIG_PACKAGE_kmod-mt7603=y
+CONFIG_PACKAGE_kmod-mt76x2=y
+CONFIG_PACKAGE_hostapd-mini=y
+CONFIG_PACKAGE_iwinfo=y
+CONFIG_PACKAGE_luci-app-wireless=y
+
+# Build output (sysupgrade image)
+CONFIG_TARGET_ROOTFS_SQUASHFS=y
+# CONFIG_TARGET_ROOTFS_EXT4FS is not set

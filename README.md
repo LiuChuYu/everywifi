@@ -12,6 +12,7 @@ The build system runs entirely inside Docker — **Docker is the only host depen
 | Board | Description |
 |---|---|
 | `mt7621` | OpenWrt firmware for MediaTek MT7621 routers |
+| `xiaomi-mi-router-4a` | OpenWrt firmware for Xiaomi Mi Router 4A Gigabit |
 | `docker-sim` | Docker simulation image for local development/testing |
 
 ### Quick start
@@ -19,6 +20,9 @@ The build system runs entirely inside Docker — **Docker is the only host depen
 ```bash
 # Build firmware for MT7621
 make build BOARD=mt7621
+
+# Build firmware for Xiaomi Mi Router 4A Gigabit
+make build BOARD=xiaomi-mi-router-4a
 
 # Build the simulation image
 make build BOARD=docker-sim
@@ -40,6 +44,7 @@ You can also call the scripts directly:
 
 ```bash
 ./scripts/build.sh mt7621
+./scripts/build.sh xiaomi-mi-router-4a
 ./scripts/build.sh docker-sim
 ./scripts/run-sim.sh
 ./scripts/run-sim.sh --rebuild
@@ -50,8 +55,9 @@ You can also call the scripts directly:
 ```
 everywifi/
 ├── boards/
-│   ├── mt7621/config       # OpenWrt .config for MT7621 (ramips/mt7621)
-│   └── docker-sim/config   # Simulation environment settings
+│   ├── mt7621/config               # OpenWrt .config for MT7621 (ramips/mt7621)
+│   ├── xiaomi-mi-router-4a/config  # OpenWrt .config for Xiaomi Mi Router 4A Gigabit
+│   └── docker-sim/config           # Simulation environment settings
 ├── docker/
 │   ├── Dockerfile.builder  # Ubuntu-based OpenWrt build container
 │   └── Dockerfile.sim      # Alpine-based simulation runtime

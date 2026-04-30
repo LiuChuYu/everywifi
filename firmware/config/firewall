@@ -1,0 +1,125 @@
+# OpenWRT UCI firewall configuration
+# Copy to /etc/config/firewall on the device
+
+config defaults
+	option input 'DROP'
+	option output 'ACCEPT'
+	option forward 'DROP'
+	option synflood_protect '1'
+
+config zone
+	option name 'lan'
+	list network 'lan'
+	option input 'ACCEPT'
+	option output 'ACCEPT'
+	option forward 'DROP'
+
+config zone
+	option name 'wan'
+	list network 'wan'
+	list network 'wan6'
+	option input 'DROP'
+	option output 'ACCEPT'
+	option forward 'DROP'
+	option masq '1'
+	option mtu_fix '1'
+
+config zone
+	option name 'vpn'
+	list network 'wg0'
+	option input 'ACCEPT'
+	option output 'ACCEPT'
+	option forward 'ACCEPT'
+
+# Allow established/related connections from WAN
+config rule
+	option name 'Allow-WAN-Established'
+	option src 'wan'
+	option dest_ip '0.0.0.0/0'
+	option target 'ACCEPT'
+	option family 'ipv4'
+	option extra '-m conntrack --ctstate ESTABLISHED,RELATED'
+
+# Allow DNS from LAN clients
+config rule
+	option name 'Allow-DNS'
+	option src 'lan'
+	option dest_port '53'
+	option proto 'tcpudp'
+	option target 'ACCEPT'
+
+# Allow DHCP from LAN clients
+config rule
+	option name 'Allow-DHCP'
+	option src 'lan'
+	option dest_port '67-68'
+	option proto 'udp'
+	option target 'ACCEPT'
+
+# Allow captive portal HTTP redirect
+config rule
+	option name 'Allow-Captive-Portal'
+	option src 'lan'
+	option dest_ip '192.168.10.1'
+	option dest_port '80 443 8080'
+	option proto 'tcp'
+	option target 'ACCEPT'
+
+# Redirect unauthenticated HTTP traffic to captive portal
+# (Managed dynamically by everywifi; this is the base redirect rule)
+config redirect
+	option name 'Captive-Portal-Redirect-HTTP'
+	option src 'lan'
+	option src_dport '80'
+	option dest_ip '192.168.10.1'
+	option dest_port '8080'
+	option proto 'tcp'
+	option target 'DNAT'
+	# everywifi's auth module adds exceptions per authenticated MAC
+
+# Allow LAN → WAN forwarding (for authenticated clients)
+# Managed dynamically via nftables set by everywifi auth module
+config forwarding
+	option src 'vpn'
+	option dest 'wan'
+
+# Block cross-client communication on WiFi (client isolation)
+config rule
+	option name 'Block-LAN-Forward'
+	option src 'lan'
+	option dest 'lan'
+	option target 'DROP'
+
+# Allow LAN → VPN
+config forwarding
+	option src 'lan'
+	option dest 'vpn'
+
+# Allow VPN → WAN (for P2P gossip egress)
+config forwarding
+	option src 'vpn'
+	option dest 'wan'
+
+# Allow SSH on management VPN only
+config rule
+	option name 'Allow-SSH-VPN'
+	option src 'vpn'
+	option dest_port '22'
+	option proto 'tcp'
+	option target 'ACCEPT'
+
+# Allow WireGuard from WAN
+config rule
+	option name 'Allow-WireGuard'
+	option src 'wan'
+	option dest_port '51820'
+	option proto 'udp'
+	option target 'ACCEPT'
+
+# Allow P2P gossip port (UDP 7777) from VPN peers
+config rule
+	option name 'Allow-P2P-Gossip'
+	option src 'vpn'
+	option dest_port '7777'
+	option proto 'udp'
+	option target 'ACCEPT'

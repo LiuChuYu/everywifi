@@ -1,0 +1,36 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# Distribution / build
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# Virtual environments
+venv/
+env/
+.env/
+.venv/
+
+# Test / coverage artifacts
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# OpenWRT build artifacts
+openwrt-build/
+
+# Runtime data
+src/data/
+/opt/
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo

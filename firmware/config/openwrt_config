@@ -1,0 +1,69 @@
+# OpenWRT .config fragment for EveryWifi
+# Place this as .config in the OpenWRT build root, then run: make defconfig
+#
+# Target: MT7621 (ramips)
+# -------------------------------------------------------------------
+
+CONFIG_TARGET_ramips=y
+CONFIG_TARGET_ramips_mt7621=y
+# CONFIG_TARGET_ramips_mt7621_DEVICE_glinet_gl-mt1300 is not set
+# Uncomment one of the following for your specific board:
+# CONFIG_TARGET_ramips_mt7621_DEVICE_glinet_gl-mt1300=y
+# CONFIG_TARGET_ramips_mt7621_DEVICE_xiaomi_mi-router-3g=y
+# CONFIG_TARGET_ramips_mt7621_DEVICE_netgear_r6220=y
+
+# --- Core networking ---
+CONFIG_PACKAGE_kmod-nft-core=y
+CONFIG_PACKAGE_nftables=y
+CONFIG_PACKAGE_kmod-nft-nat=y
+CONFIG_PACKAGE_kmod-nft-bridge=y
+CONFIG_PACKAGE_kmod-sched-core=y
+CONFIG_PACKAGE_kmod-sched-htb=y
+CONFIG_PACKAGE_tc=y
+CONFIG_PACKAGE_ip-full=y
+
+# --- WiFi / hostapd ---
+CONFIG_PACKAGE_hostapd=y
+CONFIG_PACKAGE_kmod-mt7603=y
+CONFIG_PACKAGE_kmod-mt76x2=y
+
+# --- WireGuard VPN ---
+CONFIG_PACKAGE_wireguard-tools=y
+CONFIG_PACKAGE_kmod-wireguard=y
+
+# --- LoRa (SPI / USB serial) ---
+CONFIG_PACKAGE_kmod-spi-dev=y
+CONFIG_PACKAGE_kmod-usb-serial=y
+CONFIG_PACKAGE_kmod-usb-serial-ftdi=y
+CONFIG_PACKAGE_kmod-usb-acm=y
+
+# --- GPS ---
+CONFIG_PACKAGE_gpsd=y
+
+# --- Python3 runtime ---
+CONFIG_PACKAGE_python3=y
+CONFIG_PACKAGE_python3-asyncio=y
+CONFIG_PACKAGE_python3-codecs=y
+CONFIG_PACKAGE_python3-ctypes=y
+CONFIG_PACKAGE_python3-decimal=y
+CONFIG_PACKAGE_python3-email=y
+CONFIG_PACKAGE_python3-hashlib=y
+CONFIG_PACKAGE_python3-logging=y
+CONFIG_PACKAGE_python3-multiprocessing=y
+CONFIG_PACKAGE_python3-sqlite3=y
+CONFIG_PACKAGE_python3-ssl=y
+CONFIG_PACKAGE_python3-unittest=y
+CONFIG_PACKAGE_python3-urllib=y
+
+# --- SQLite ---
+CONFIG_PACKAGE_libsqlite3=y
+CONFIG_PACKAGE_sqlite3-cli=y
+
+# --- System utilities ---
+CONFIG_PACKAGE_curl=y
+CONFIG_PACKAGE_openssh-sftp-server=y
+CONFIG_PACKAGE_openssl-util=y
+CONFIG_PACKAGE_ca-bundle=y
+CONFIG_PACKAGE_nano=y
+CONFIG_PACKAGE_htop=y
+CONFIG_PACKAGE_logrotate=y

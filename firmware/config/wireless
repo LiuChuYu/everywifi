@@ -1,0 +1,39 @@
+# OpenWRT UCI wireless configuration
+# Copy to /etc/config/wireless on the device
+
+config wifi-device 'radio0'
+	option type 'mac80211'
+	option path 'pci0000:00/0000:00:00.0'
+	option band '2g'
+	option htmode 'HT20'
+	option channel 'auto'
+	option txpower '20'
+	option country 'TW'
+
+config wifi-iface 'wifinet0'
+	option device 'radio0'
+	option mode 'ap'
+	option ssid 'EveryWifi-Free'
+	option encryption 'none'
+	option network 'lan'
+	# Captive portal redirect handled by nftables + everywifi captive portal
+	option isolate '1'
+	option disassoc_low_ack '1'
+
+config wifi-device 'radio1'
+	option type 'mac80211'
+	option path 'pci0000:01/0000:01:00.0'
+	option band '5g'
+	option htmode 'VHT80'
+	option channel 'auto'
+	option txpower '23'
+	option country 'TW'
+
+config wifi-iface 'wifinet1'
+	option device 'radio1'
+	option mode 'ap'
+	option ssid 'EveryWifi-5G'
+	option encryption 'none'
+	option network 'lan'
+	option isolate '1'
+	option disassoc_low_ack '1'

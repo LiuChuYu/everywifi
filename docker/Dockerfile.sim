@@ -1,0 +1,29 @@
+# Simulation runtime image
+# Mimics the wifi-router environment on x86 for local testing without hardware.
+# Services: dnsmasq (DHCP/DNS), hostapd (802.11 AP), iptables (NAT).
+#
+# Usage:
+#   scripts/run-sim.sh          (recommended)
+#   docker run --rm -it --cap-add=NET_ADMIN everywifi-sim
+
+FROM alpine:3.19
+
+RUN apk add --no-cache \
+    bash \
+    dnsmasq \
+    hostapd \
+    iptables \
+    iproute2 \
+    tcpdump \
+    curl \
+    jq \
+    && rm -rf /var/cache/apk/*
+
+# Copy simulation config
+COPY boards/docker-sim/config /etc/everywifi/sim.conf
+COPY scripts/entrypoint-sim.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+EXPOSE 53/udp 67/udp 80/tcp
+
+ENTRYPOINT ["/entrypoint.sh"]

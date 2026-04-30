@@ -1,0 +1,29 @@
+# OpenWrt .config for MT7621 (ramips/mt7621)
+# Generated from: make menuconfig  (abbreviated fragment — add full .config here)
+#
+# Target platform
+CONFIG_TARGET_ramips=y
+CONFIG_TARGET_ramips_mt7621=y
+
+# Default packages
+CONFIG_PACKAGE_base-files=y
+CONFIG_PACKAGE_libc=y
+CONFIG_PACKAGE_libgcc=y
+CONFIG_PACKAGE_busybox=y
+
+# Networking
+CONFIG_PACKAGE_dnsmasq=y
+CONFIG_PACKAGE_iptables=y
+CONFIG_PACKAGE_ip6tables=y
+CONFIG_PACKAGE_ppp=y
+CONFIG_PACKAGE_ppp-mod-pppoe=y
+
+# Wireless
+CONFIG_PACKAGE_kmod-mt7603=y
+CONFIG_PACKAGE_kmod-mt76x2=y
+CONFIG_PACKAGE_hostapd-mini=y
+CONFIG_PACKAGE_iwinfo=y
+
+# Build output
+CONFIG_TARGET_ROOTFS_SQUASHFS=y
+# CONFIG_TARGET_ROOTFS_EXT4FS is not set

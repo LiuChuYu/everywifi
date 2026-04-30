@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
-from models import Transaction
+from models import Transaction, User
 
 account_bp = Blueprint('account', __name__, url_prefix='/account')
 
@@ -60,7 +60,6 @@ def profile():
         confirm_new_password = request.form.get('confirm_new_password', '')
 
         if email and email != current_user.email:
-            from models import User
             if User.query.filter_by(email=email).first():
                 flash('Email already in use.', 'danger')
                 return render_template('account/profile.html')
@@ -72,11 +71,11 @@ def profile():
             if not check_password_hash(current_user.password_hash, current_password):
                 flash('Current password is incorrect.', 'danger')
                 return render_template('account/profile.html')
-            if new_password != confirm_new_password:
-                flash('New passwords do not match.', 'danger')
-                return render_template('account/profile.html')
             if not new_password:
                 flash('New password cannot be empty.', 'danger')
+                return render_template('account/profile.html')
+            if new_password != confirm_new_password:
+                flash('New passwords do not match.', 'danger')
                 return render_template('account/profile.html')
             current_user.password_hash = generate_password_hash(new_password)
             db.session.commit()

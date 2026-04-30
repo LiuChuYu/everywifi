@@ -1,6 +1,9 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from flask_login import UserMixin
 from app import db
+
+def _utcnow():
+    return datetime.now(timezone.utc)
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -9,7 +12,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
     balance = db.Column(db.Float, default=0.0)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=_utcnow)
     is_active = db.Column(db.Boolean, default=True)
     transactions = db.relationship('Transaction', backref='user', lazy=True)
 
@@ -20,4 +23,4 @@ class Transaction(db.Model):
     amount = db.Column(db.Float, nullable=False)
     type = db.Column(db.String(10), nullable=False)  # 'topup' or 'deduct'
     description = db.Column(db.String(255))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=_utcnow)

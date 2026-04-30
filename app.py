@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
@@ -7,7 +8,7 @@ login_manager = LoginManager()
 
 def create_app(config=None):
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'dev-secret-key-change-in-production'
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///everywifi.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -37,4 +38,4 @@ def create_app(config=None):
 
 if __name__ == '__main__':
     app = create_app()
-    app.run(port=5000, debug=True)
+    app.run(port=5000, debug=os.environ.get('FLASK_DEBUG', 'false').lower() == 'true')
